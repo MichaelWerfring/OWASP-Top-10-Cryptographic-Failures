@@ -3,6 +3,7 @@ const session = require('express-session');
 const db = require('./Database');
 const app = express();
 const port = 3001;
+const games = {};
 
 app.use(session({
     secret: 'my-secret-key',
@@ -37,6 +38,49 @@ app.get('/profile', (req, res) => {
     }
 });
 
+app.post('/game', (req, res) => {
+    //if just session id create new game
+    //if game id, index and X/O then make move
+
+    const sessionId = req.sessionID;
+    const { gameId, index, turn } = req.body;
+
+    if (!gameId) {
+        // Create a new game
+        const newGame = new Game();
+        games[sessionId] = newGame;
+        res.json({ gameId: newGame.gameId });
+    } else {
+        // Make a move in an existing game
+        const game = games[sessionId];
+        if (!game) {
+            res.status(400).json({ error: 'No game found for this session' });
+            return;
+        }
+
+        game.makeMove(gameId, index, turn);
+        res.json(game.getGame(gameId));
+    }
+});
+
+app.get('/game', (req, res) => {
+    //if game id, return game state
+    //including board, turn, winner
+    const { gameId } = req.query;
+    const game = games[req.sessionID];
+
+    if (!game) {
+        res.status(400).json({ error: 'No game found for this session' });
+        return;
+    }
+
+    if (!gameId) {
+        res.status(400).json({ error: 'Game ID is required' });
+        return;
+    }
+
+    res.json(game.getGame(gameId));
+});
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
