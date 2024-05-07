@@ -10,6 +10,9 @@ const db = {
     authenticateUser: function(username, password) {
         const user = this.users.find(user => user.username === username && user.password === password);
         return user ? user : null;
+    },
+    getUserByUsername(username) {
+        return this.users.find(user => user.username === username);
     }
 };
 const cors = require('cors');
@@ -32,7 +35,7 @@ app.post('/login', (req, res) => {
     const user = db.authenticateUser(username, password);
     if (user) {
         const token = jwt.sign({ username }, secretKey, { expiresIn: '1h' });
-        res.json({ token });
+        res.json({ "token":token, "user" :db.getUserByUsername(username) });
         console.log(`User ${user.username} logged in`);
     } else {
         res.status(401).send('Invalid username or password');

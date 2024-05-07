@@ -1,0 +1,19 @@
+/* Navbar styles */
+app-navbar {
+  /* Add your styles for the navbar here */
+}
+
+/* Profile container styles */
+.profile-container {
+  display: flex;
+  align-items: center;
+  margin-top: 20px; /* Adjust margin as needed */
+}
+
+/* Profile picture styles */
+.profile-picture {
+  width: 100px; /* Adjust size as needed */
+  height: 100px; /* Adjust size as needed */
+  border-radius: 50%; /* To make it round */
+  margin-right: 20px; /* Adjust margin as needed */
+}

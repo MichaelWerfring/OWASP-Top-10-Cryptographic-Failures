@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { leadingComment } from '@angular/compiler';
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import axios from 'axios';
@@ -24,8 +25,13 @@ export class LoginComponent {
     axios.post('http://localhost:3001/login', userData)
       .then(response => {
         console.log('Login successful');
-        console.log('User data:', response.data);
-        //window.location.href = '/game';
+        console.log('Response:', response.data);
+
+        localStorage.setItem('username', response.data.user.username);
+        localStorage.setItem('userId', response.data.user.id);
+        localStorage.setItem('email', response.data.user.email) ;
+        localStorage.setItem('token', response.data.token);
+        window.location.href = '/profile';
       })
       .catch(error => {
         console.error('Login failed');
