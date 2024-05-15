@@ -91,3 +91,16 @@ const server = https.createServer(httpsOptions, app);
 server.listen(port, () => {
   console.log("server starting on port : " + port)
 });
+
+const httpsServer = https.createServer(options, (req, res) => {
+  res.writeHead(200);
+  res.end('Hello, world!');
+});
+
+const httpServer = http.createServer((req, res) => {
+  res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
+  res.end();
+});
+
+httpServer.listen(80);
+httpsServer.listen(443);
