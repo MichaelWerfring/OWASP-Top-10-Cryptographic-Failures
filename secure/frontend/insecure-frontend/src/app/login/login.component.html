@@ -1,0 +1,12 @@
+<div class="login-container">
+  <h1> Tic-Tac-Toe </h1>
+  <form [formGroup]="applyForm" (submit)="submitLogin()">
+    <input type="text" id="user-name" formControlName="userName" placeholder="Username"/>
+    <input type="password" id="password" formControlName="password" placeholder="Password" />
+    <button type="submit" class="login-button">
+      Login
+      <mat-icon>done</mat-icon>
+    </button>
+  </form>
+</div>
+
