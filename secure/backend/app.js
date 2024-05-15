@@ -1,6 +1,9 @@
 const express = require('express');
 const session = require('express-session');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const cors = require('cors');
+
 const db = {
     users: [
         { id: 1, username: 'user1', email: 'user1@example.com', password: 'password1'},
@@ -15,23 +18,11 @@ const db = {
         return this.users.find(user => user.username === username);
     }
 };
-const cors = require('cors');
+
 const app = express();
 const port = 3001;
-const games = {};
 const secretKey = 'your-secret-key';
-const https = require('https');
-var key = fs.readFileSync(__dirname + '/../certs/selfsigned.key');
-var cert = fs.readFileSync(__dirname + '/../certs/selfsigned.crt');
-var options = {
-  key: key,
-  cert: cert
-};
 
-app = express()
-app.get('/', (req, res) => {
-   res.send('Now using https..');
-});
 app.use(cors());
 app.use(express.json()); 
 app.use(session({
@@ -41,16 +32,10 @@ app.use(session({
 }));
 
 app.get('/', (req, res) => {
-    res.send('Now using https..');
- });
-
-var server = https.createServer(options, app);
-
-server.listen(port, () => {
-  console.log("server starting on port : " + port)
+   res.send('Now using https..');
 });
 
-server.post('/login', (req, res) => {
+app.post('/login', (req, res) => {
     console.log(`Login request received ${req.body.username}/${req.body.password}`);
     const { username, password } = req.body;
     const user = db.authenticateUser(username, password);
@@ -77,14 +62,14 @@ const verifyToken = (req, res, next) => {
       req.user = decoded;
       next();
     });
-  };
+};
 
-server.get('/profile', verifyToken, (req, res) => {
+app.get('/profile', verifyToken, (req, res) => {
     console.log(`Profile request received for ${req.user.username}`);
     res.json({ message: 'Profile accessed successfully', user: req.user });
-  });
+});
 
-  app.post('/logout', (req, res) => {
+app.post('/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) {
             console.error('Error destroying session:', err);
@@ -94,4 +79,15 @@ server.get('/profile', verifyToken, (req, res) => {
             res.status(200).send('Logged out successfully');
         }
     });
+});
+
+const httpsOptions = {
+    key: fs.readFileSync(__dirname + '/../certs/selfsigned.key'),
+    cert: fs.readFileSync(__dirname + '/../certs/selfsigned.crt')
+};
+
+const server = https.createServer(httpsOptions, app);
+
+server.listen(port, () => {
+  console.log("server starting on port : " + port)
 });
