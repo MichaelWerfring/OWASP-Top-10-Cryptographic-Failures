@@ -1,0 +1,6 @@
+<h1>Turn: {{currentPlayer}}</h1>
+<div class="grid-container">
+    @for (item of cells; track $index) {
+        <app-cell (click)="makeMove(item)" [id]="$index" [value]="item.value" class="cell"></app-cell>
+    }  
+</div>

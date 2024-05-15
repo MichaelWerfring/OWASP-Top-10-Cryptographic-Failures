@@ -1,0 +1,12 @@
+<app-navbar></app-navbar>
+<div class="card">
+  <div class="profile-container">
+    <img class="profile-picture" [src]="profilePicture" alt="Profile Picture">
+    <div class="profile-details">
+      <p><strong>User ID:</strong> {{ userId }}</p>
+      <p><strong>Name:</strong> {{ name }}</p>
+      <p><strong>Email:</strong> {{ email }}</p>
+    </div>
+  </div>
+  <button class="logout-button" (click)="submitLogout()">Logout</button>
+</div>

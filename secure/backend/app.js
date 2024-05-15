@@ -3,7 +3,8 @@ const session = require('express-session');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const cors = require('cors');
-
+const https = require('https');
+const http = require('http');
 const db = {
     users: [
         { id: 1, username: 'user1', email: 'user1@example.com', password: 'password1'},
@@ -20,7 +21,6 @@ const db = {
 };
 
 const app = express();
-const port = 3001;
 const secretKey = 'your-secret-key';
 
 app.use(cors());
@@ -81,21 +81,12 @@ app.post('/logout', (req, res) => {
     });
 });
 
-const httpsOptions = {
-    key: fs.readFileSync(__dirname + '/../certs/selfsigned.key'),
-    cert: fs.readFileSync(__dirname + '/../certs/selfsigned.crt')
+const options = {
+    key: fs.readFileSync(__dirname + '/cert/key.pem'),
+    cert: fs.readFileSync(__dirname + '/cert/cert.pem')
 };
 
-const server = https.createServer(httpsOptions, app);
-
-server.listen(port, () => {
-  console.log("server starting on port : " + port)
-});
-
-const httpsServer = https.createServer(options, (req, res) => {
-  res.writeHead(200);
-  res.end('Hello, world!');
-});
+const httpsServer = https.createServer(options, app);
 
 const httpServer = http.createServer((req, res) => {
   res.writeHead(301, { Location: `https://${req.headers.host}${req.url}` });
