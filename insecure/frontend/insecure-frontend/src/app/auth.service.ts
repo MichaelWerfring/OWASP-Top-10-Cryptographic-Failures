@@ -9,7 +9,7 @@ export class AuthService {
   constructor() { }
 
   isAuth():boolean{
-    const serverUrl = 'http://localhost:3001/login';
+    const serverUrl = 'http://10.0.2.15:3001';
 
     const token = localStorage.getItem('token');
     if (token === null){
@@ -22,7 +22,7 @@ export class AuthService {
       },
     };
   
-    axios.post(`${serverUrl}/profile`, config)
+    axios.get(`${serverUrl}/profile`, config)
       .then(response => {
         console.log("valid token");
         return true;
